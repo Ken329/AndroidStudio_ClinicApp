@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Clinic Application</string>
+    <string name="InvalidName">Username must be more than 6 letters</string>
+    <string name="InvalidAge">Field shouldn\'t be empty</string>
+</resources>
