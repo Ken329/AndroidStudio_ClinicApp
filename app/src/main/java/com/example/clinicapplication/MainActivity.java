@@ -91,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
                             if(snapshot.exists()){
                                 String dataPass = snapshot.child(myUsername).child("password").getValue().toString();
                                 if(dataPass.equals(myPassword)){
+                                    Intent intent = new Intent(v.getContext(), MainUser.class);
+                                    intent.putExtra("username", myUsername);
+                                    startActivity(intent);
                                     Toast.makeText(MainActivity.this, "Welcome back " + myUsername, Toast.LENGTH_SHORT).show();
                                 }else{
                                     password.setError("Wrong password");

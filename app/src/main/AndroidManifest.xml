@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ClinicApplication">
-        <activity android:name=".MainAdminEmployee"></activity>
+        <activity android:name=".MainUser"></activity>
+        <activity android:name=".MainAdminEmployee" />
         <activity android:name=".MainAdminDetail" />
         <activity android:name=".MainAdmin" />
         <activity android:name=".MainSignUp" />
