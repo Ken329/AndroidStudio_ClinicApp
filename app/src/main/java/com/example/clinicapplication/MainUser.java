@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +39,7 @@ public class MainUser extends AppCompatActivity {
     DatabaseReference ref;
     Random rant;
     int count;
-    ArrayList<String> arrayservice, arraydate, arraytime, arrayperform;
+    ArrayList<String> arrayservice, arraydate, arraytime, arrayperform, arraycode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class MainUser extends AppCompatActivity {
         arraydate = new ArrayList<>();
         arraytime = new ArrayList<>();
         arrayperform = new ArrayList<>();
+        arraycode = new ArrayList<>();
         Query query = FirebaseDatabase.getInstance().getReference("appointment")
                 .orderByChild("client")
                 .equalTo(username);
@@ -70,6 +73,7 @@ public class MainUser extends AppCompatActivity {
                     arraydate.add(s1.child("date").getValue().toString());
                     arraytime.add(s1.child("time").getValue().toString());
                     arrayperform.add(s1.child("performed").getValue().toString());
+                    arraycode.add(s1.child("code").getValue().toString());
                 }
                 customAdapter adapter = new customAdapter();
                 list.setAdapter(adapter);
@@ -92,6 +96,64 @@ public class MainUser extends AppCompatActivity {
                 getPopup();
             }
         });
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listPop(arraycode.get(position), arrayperform.get(position));
+            }
+        });
+    }
+    public void listPop(String code, String perform){
+        dialog = new AlertDialog.Builder(this);
+        View v = getLayoutInflater().inflate(R.layout.popup_appointdetail, null);
+        TextView service = v.findViewById(R.id.tvUserService);
+        TextView time = v.findViewById(R.id.tvUserTime);
+        TextView date = v.findViewById(R.id.tvEmpName);
+        TextView name = v.findViewById(R.id.tvEmpName);
+        TextView age = v.findViewById(R.id.tvEmpAge);
+        TextView phone = v.findViewById(R.id.tvEmpPhone);
+        TextView role = v.findViewById(R.id.tvEmpRole);
+        LinearLayout pending = v.findViewById(R.id.linearPending);
+        LinearLayout lName = v.findViewById(R.id.linearEmpName);
+        LinearLayout lAge = v.findViewById(R.id.linearEmpAge);
+        LinearLayout lPhone = v.findViewById(R.id.linearEmpPhone);
+        LinearLayout lRole = v.findViewById(R.id.linearEmpRole);
+        if(perform.equals("pending")){
+            lName.setVisibility(View.INVISIBLE);
+            lAge.setVisibility(View.INVISIBLE);
+            lPhone.setVisibility(View.INVISIBLE);
+            lRole.setVisibility(View.INVISIBLE);
+        }else{
+            pending.setVisibility(View.INVISIBLE);
+             ref = FirebaseDatabase.getInstance().getReference("clinic").child("employee").child(perform);
+             ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                 @Override
+                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                     name.setText(snapshot.child("employee_name").getValue().toString());
+                     age.setText(snapshot.child("employee_age").getValue().toString());
+                     phone.setText(snapshot.child("employee_phone").getValue().toString());
+                     role.setText(snapshot.child("employee_role").getValue().toString());
+                 }
+                 @Override
+                 public void onCancelled(@NonNull DatabaseError error) {
+                 }
+             });
+        }
+        ref = FirebaseDatabase.getInstance().getReference("appointment").child(code);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                service.setText(snapshot.child("service").getValue().toString());
+                time.setText(snapshot.child("time").getValue().toString());
+                date.setText(snapshot.child("date").getValue().toString());
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        dialog.setView(v);
+        Dialog dialog1 = dialog.create();
+        dialog1.show();
     }
     public void getPopup(){
         dialog = new AlertDialog.Builder(this);
