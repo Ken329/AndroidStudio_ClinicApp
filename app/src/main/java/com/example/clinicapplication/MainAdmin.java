@@ -38,7 +38,7 @@ public class MainAdmin extends AppCompatActivity {
         load.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                goAct(v, "load");
             }
         });
         employee.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +56,9 @@ public class MainAdmin extends AppCompatActivity {
                 break;
             case "detail":
                 intent = new Intent(v.getContext(), MainAdminDetail.class);
+                break;
+            case "load":
+                intent = new Intent(v.getContext(), MainAdminLoad.class);
                 break;
             case "employee":
                 intent = new Intent(v.getContext(), MainAdminEmployee.class);
